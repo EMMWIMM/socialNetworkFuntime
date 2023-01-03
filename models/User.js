@@ -1,14 +1,11 @@
-const { Schema, Types, model } = require('mongoose');
+// const { Schema, Types, model } = require('mongoose');
+const mongoose = require('mongoose');
 const thoughtsSchema = require('./Thought')
 
 const userSchema = new schema(
 
   {
 
-    _id:{
-      type:schema.types.objectID,
-      default:()=> new Types.objectID(),
-    },
     username:{
       type: String,
       required: true,
@@ -32,5 +29,6 @@ const userSchema = new schema(
   }]
 
     }
-  }
 )
+
+module.exports = mongoose.model('User',userSchema);
