@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const thoughtsSchema = require('./Thought')
 
-const userSchema = new schema(
+const userSchema = new mongoose.Schema(
 
   {
 
@@ -22,11 +22,17 @@ const userSchema = new schema(
             }
         }
     },
-    thoughts:[thoughtsSchema],
-  friends:[{
-    type: Schema.Types.ObjectID,
-    ref:'User'
-  }]
+    thoughts:[
+      {type: mongoose.Schema.Types.ObjectId,ref:'Thought'}
+    ],
+
+
+    friends:[
+      {
+        type: mongoose.Schema.Types.ObjectID,
+        ref:'User'
+      }
+    ]
 
     }
 )
