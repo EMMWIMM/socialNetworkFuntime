@@ -1,4 +1,4 @@
-// const { Schema, Types, model } = require('mongoose');
+
 const mongoose = require('mongoose');
 const thoughtsSchema = require('./Thought')
 

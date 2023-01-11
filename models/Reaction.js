@@ -1,6 +1,6 @@
-//const { Schema, model, Types } = require('mongoose');
+
 const mongoose = require('mongoose');
-//TODO: this import MIGHT need to change like Thought.js did???
+
 
 const reactionsSchema = new mongoose.Schema(
   {

@@ -5,7 +5,6 @@ const util = require('util')
 const router = express.Router();
 const User = require('../models/User')
 
-
 router.get('/thoughts', async (req, res) => {
     console.log('get all thoughts');
     const thoughts = await Thought.find();
@@ -50,8 +49,8 @@ router.post('/thoughts', async (req, res) => {
         username: req.body.username,
         thoughtText: req.body.thoughtText
     });
-    console.log('req'+req);
-    //console.log('req: '+util.inspect(req, false, null, true ))
+    
+    
     await thought.save();
 
     //also save the thought in the users's thoughts array?
@@ -80,11 +79,14 @@ router.delete('/thoughts/:id', async (req, res) => {
 
 //routes for Reactions
 router.post('/thoughts/:thoughtId/reactions', async (req, res) =>{
+<<<<<<< HEAD
     console.log("calling /api/thoughts/"+req.params.thoughtId);
     console.log('reaction body is '+req.body.reactionBody);
+=======
+  
+>>>>>>> 5313577ec1ee549c25db9456242c1881d10f7031
     try {
         const thought = await Thought.findOne({_id: req.params.thoughtId});
-        console.log("found a thought");
         const reaction = new Reaction({
             reactionBody: req.body.reactionBody,
             username: req.body.username
@@ -154,28 +156,24 @@ router.post('/users', async (req, res) =>{
         username: req.body.username,
         email: req.body.email
     });
-    console.log('req'+req);
-    //console.log('req: '+util.inspect(req, false, null, true ))
+    
     await user.save();
     res.send(user);
 });
 
 router.put('/users/:userId', async (req, res) =>{
     try {
-        console.log("1");
+        
         const user = await User.findOne({_id: req.params.userId});
-        console.log("2");
+        
         if(req.body.username){
             user.username = req.body.username;
-            console.log("3");
+           
         }
         if(req.body.email){
             user.email = req.body.email;
-            console.log("4");
-        }
-        console.log("5");
+                   }        
         await user.save();
-        console.log("6");
         res.send(user);
     } catch (error) {
         console.log('There was an error '+error+' saving user:'+user);
@@ -185,7 +183,6 @@ router.put('/users/:userId', async (req, res) =>{
 });
 router.delete('/users/:userId', async (req, res) =>{
     //delete user
-    console.log('//delete user');
     try {
         await User.deleteOne({_id: req.params.userId});
         res.status(204);
@@ -194,10 +191,7 @@ router.delete('/users/:userId', async (req, res) =>{
         res.status(404);
         res.send({error: 'User with _id:'+req.params.userId+' does not exist' });
     }
-    console.log('3');
-    //BONUS: remove a users associated thoughts when deleted
-
-    //SUPER BONUS: delete associated reactions
+   
 });
 router.post('/users/:userId/friends/:friendId', async (req, res) => {
     const user = await User.findOne({_id: req.params.userId});
@@ -222,9 +216,4 @@ router.delete('/users/:userId/friends/:friendId', async (req, res) => {
 
 
 module.exports = router;
-//{
-    //User, //NOTE: @em commented out because IDK what you want to happen with USERS from a route perspective
 
-    //Thought, 
-    //router
-//}; // was getting TypeError: Router.use() requires a middleware function but got a Object ... if I tried using the brackets???
