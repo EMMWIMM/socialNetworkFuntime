@@ -5,7 +5,7 @@ const routes = require('./routes/index.js');
 
 //connect to mongoDB
 mongoose
-    .connect("mongodb://localhost:27017/snf", { useNewUrlParser: true })
+    .connect("mongodb://localhost:27017/snf3", { useNewUrlParser: true })
     .then(() => {
         const app = express()  
         app.use(express.json()); 

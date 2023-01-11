@@ -5,19 +5,20 @@ const util = require('util')
 const router = express.Router();
 const User = require('../models/User')
 
-//note: @em , not sure what these are for? or planned for ?
-// const User = require('./User');
-
 
 router.get('/thoughts', async (req, res) => {
+    console.log('get all thoughts');
     const thoughts = await Thought.find();
     res.send(thoughts);
 });
 
 router.get('/thoughts/:id', async (req, res) => {
+    console.log('get thought by id'+req.params.id);
     try {
-        const post = await Thought.findOne({_id: req.params.id});
-        res.send(post);
+        console.log('get thought by id');
+        console.log('req: '+req);
+        const thought = await Thought.findOne({_id: req.params.id});
+        res.send(thought);
     } catch (error) {
         res.status(404);
         res.send({error: 'Thought with _id:'+req.params.id+' does not exist'});
@@ -26,6 +27,7 @@ router.get('/thoughts/:id', async (req, res) => {
 
 //update
 router.put('/thoughts/:id', async(req, res) => {
+    console.log('get thought by id'+req.params.id);
     try {
         const thought = await Thought.findOne({_id: req.params.id});
         if(req.body.username){
@@ -51,13 +53,25 @@ router.post('/thoughts', async (req, res) => {
     console.log('req'+req);
     //console.log('req: '+util.inspect(req, false, null, true ))
     await thought.save();
+
+    //also save the thought in the users's thoughts array?
+    const user = await User.findOne({username: req.body.username});
+    console.log(user);
+    console.log(user.thoughts);
+    user.thoughts.push(thought);
     res.send(thought);
 });
 
 router.delete('/thoughts/:id', async (req, res) => {
+    console.log('delete thought by id'+req.params.id);
     try {
+        console.log("req: "+req);
+        console.log("req.params.id: "+req.params.id);
         await Thought.deleteOne({_id: req.params.id});
-        res.status(204).send();
+        console.log('1');
+        res.status(204);
+        console.log('2');
+        res.send();
     } catch {
         res.status(404);
         res.send({error: 'Thought with _id:'+req.params.id+' does not exist' });
@@ -67,18 +81,22 @@ router.delete('/thoughts/:id', async (req, res) => {
 //routes for Reactions
 router.post('/thoughts/:thoughtId/reactions', async (req, res) =>{
     console.log("calling /api/thoughts/"+req.params.thoughtId);
+    console.log('reaction body is '+req.body.reactionBody);
     try {
         const thought = await Thought.findOne({_id: req.params.thoughtId});
         console.log("found a thought");
         const reaction = new Reaction({
-            body: req.body.reactionBody,
+            reactionBody: req.body.reactionBody,
             username: req.body.username
         })
-
+        console.log('reaction to add: '+reaction);
         thought.reactions.push(reaction);
+        console.log(reaction+' reaction added');
         await thought.save();
+        console.log('thought saved');
         res.send(reaction)
-    } catch {
+    } catch(error) {
+        console.log('error: '+error);
         res.status(404);
         res.send({error: 'Thought with _id:'+req.params.thoughtId+' does not exist' });
     }
@@ -87,11 +105,20 @@ router.post('/thoughts/:thoughtId/reactions', async (req, res) =>{
 router.delete('/thoughts/:thoughtId/reactions/:reactionId', async (req, res) =>{
     try {
         const thought = await Thought.findOne({_id: req.params.thoughtId});
+        console.log('delete reaction for thought:');
         let tempReactions = thought.reactions.filter(function(value, index, array){
-            return value != req.params.reactionId;
+            console.log('value: '+value);
+            console.log('index: '+index);
+            //console.log('array: '+array);
+            let returnVal= ( value._id != req.params.reactionId);
+            console.log('returnVal:'+returnVal);
+            return returnVal;
         });
+        console.log('tempReactions: '+tempReactions);
         thought.reactions = tempReactions;
+        console.log('thought.reactions: '+thought.reactions);
         await thought.save();
+        console.log('saved');
         res.status(204).send();
     } catch {
         res.status(404);
@@ -111,6 +138,15 @@ router.get('/users/:userId', async (req, res) =>{
     } catch (error) {
         res.status(404);
         res.send({error: 'User with _id:'+req.params.userId+' does not exist'});
+    }
+});
+router.get('/userByName/:username', async (req, res) =>{
+    try {
+        const user = await User.findOne({username: req.params.username});
+        res.send(user);
+    } catch (error) {
+        res.status(404);
+        res.send({error: 'User with username:'+req.params.username+' does not exist'});
     }
 });
 router.post('/users', async (req, res) =>{
@@ -142,6 +178,7 @@ router.put('/users/:userId', async (req, res) =>{
         console.log("6");
         res.send(user);
     } catch (error) {
+        console.log('There was an error '+error+' saving user:'+user);
         res.status(404);
         res.send({error: 'User with _id:'+req.params.userId+' does not exist'});
     }
