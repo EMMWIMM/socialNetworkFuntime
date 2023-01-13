@@ -52,13 +52,15 @@ router.post('/thoughts', async (req, res) => {
     
     await thought.save();
 
-    //also save the thought in the users's thoughts array?
+    
     const user = await User.findOne({username: req.body.username});
-    console.log(user);
-    console.log(user.thoughts);
-    user.thoughts.push(thought);
-    user.save();
-    console.log(user.friendCount);
+    if(user){
+        console.log(user);
+        console.log(user.thoughts);
+        user.thoughts.push(thought);
+        user.save();
+        console.log(user.friendCount);
+    }
     res.send(thought.toObject());
 });
 
@@ -158,19 +160,20 @@ router.post('/users', async (req, res) =>{
 });
 
 router.put('/users/:userId', async (req, res) =>{
+    let user ;
     try {
-        
-        const user = await User.findOne({_id: req.params.userId});
-        
+        user = await User.findOne({_id: req.params.userId});
+        console.log('user: '+user);
         if(req.body.username){
             user.username = req.body.username;
-           
         }
+        console.log('1');
         if(req.body.email){
             user.email = req.body.email;
-                   }        
+        }        
+        console.log('2');
         await user.save();
-        res.send(user.toObject());
+        res.send(user);
     } catch (error) {
         console.log('There was an error '+error+' saving user:'+user);
         res.status(404);
