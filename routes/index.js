@@ -79,12 +79,7 @@ router.delete('/thoughts/:id', async (req, res) => {
 
 //routes for Reactions
 router.post('/thoughts/:thoughtId/reactions', async (req, res) =>{
-<<<<<<< HEAD
-    console.log("calling /api/thoughts/"+req.params.thoughtId);
-    console.log('reaction body is '+req.body.reactionBody);
-=======
-  
->>>>>>> 5313577ec1ee549c25db9456242c1881d10f7031
+
     try {
         const thought = await Thought.findOne({_id: req.params.thoughtId});
         const reaction = new Reaction({
