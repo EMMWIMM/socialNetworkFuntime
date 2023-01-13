@@ -54,12 +54,12 @@ const thoughtsSchema = new mongoose.Schema(
     // ]
 
   },
-  // {
-  //   toJSON:{
-  //     getters:true,
-  //   },
-  //   id:false,
-  // }
+  {
+    toJSON:{
+      getters:true,
+    },
+    //id:false,
+  }
 )
 thoughtsSchema.virtual('reactionCount').get(function() {
   this.reactions.length;

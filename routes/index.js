@@ -17,7 +17,7 @@ router.get('/thoughts/:id', async (req, res) => {
         console.log('get thought by id');
         console.log('req: '+req);
         const thought = await Thought.findOne({_id: req.params.id});
-        res.send(thought);
+        res.send(thought.toObject());
     } catch (error) {
         res.status(404);
         res.send({error: 'Thought with _id:'+req.params.id+' does not exist'});
@@ -37,7 +37,7 @@ router.put('/thoughts/:id', async(req, res) => {
         }
 
         await thought.save();
-        res.send(thought);
+        res.send(thought.toObject());
     } catch (error) {
         res.status(404);
         res.send({error: 'Thought with _id:'+req.params.id+' does not exist'});
@@ -50,7 +50,6 @@ router.post('/thoughts', async (req, res) => {
         thoughtText: req.body.thoughtText
     });
     
-    
     await thought.save();
 
     //also save the thought in the users's thoughts array?
@@ -58,7 +57,9 @@ router.post('/thoughts', async (req, res) => {
     console.log(user);
     console.log(user.thoughts);
     user.thoughts.push(thought);
-    res.send(thought);
+    user.save();
+    console.log(user.friendCount);
+    res.send(thought.toObject());
 });
 
 router.delete('/thoughts/:id', async (req, res) => {
@@ -91,7 +92,7 @@ router.post('/thoughts/:thoughtId/reactions', async (req, res) =>{
         console.log(reaction+' reaction added');
         await thought.save();
         console.log('thought saved');
-        res.send(reaction)
+        res.send(reaction.toObject())
     } catch(error) {
         console.log('error: '+error);
         res.status(404);
@@ -131,7 +132,7 @@ router.get('/users', async (req, res) =>{
 router.get('/users/:userId', async (req, res) =>{
     try {
         const user = await User.findOne({_id: req.params.userId});
-        res.send(user);
+        res.send(user.toObject());
     } catch (error) {
         res.status(404);
         res.send({error: 'User with _id:'+req.params.userId+' does not exist'});
@@ -140,7 +141,7 @@ router.get('/users/:userId', async (req, res) =>{
 router.get('/userByName/:username', async (req, res) =>{
     try {
         const user = await User.findOne({username: req.params.username});
-        res.send(user);
+        res.send(user.toObject());
     } catch (error) {
         res.status(404);
         res.send({error: 'User with username:'+req.params.username+' does not exist'});
@@ -153,7 +154,7 @@ router.post('/users', async (req, res) =>{
     });
     
     await user.save();
-    res.send(user);
+    res.send(user.toObject());
 });
 
 router.put('/users/:userId', async (req, res) =>{
@@ -169,7 +170,7 @@ router.put('/users/:userId', async (req, res) =>{
             user.email = req.body.email;
                    }        
         await user.save();
-        res.send(user);
+        res.send(user.toObject());
     } catch (error) {
         console.log('There was an error '+error+' saving user:'+user);
         res.status(404);
@@ -193,7 +194,7 @@ router.post('/users/:userId/friends/:friendId', async (req, res) => {
     const friend = await User.findOne({_id: req.params.friendId});
     user.friends.push(friend);
     await user.save();
-    res.send(user);
+    res.send(user.toObject());
 });
 router.delete('/users/:userId/friends/:friendId', async (req, res) => {
     try {
